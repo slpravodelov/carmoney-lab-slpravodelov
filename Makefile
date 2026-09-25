@@ -8,7 +8,7 @@ LOCAL_PHP := $(shell command -v php >/dev/null 2>&1 && command -v composer >/dev
 
 .DEFAULT_GOAL := help
 
-.PHONY: help up down logs test lint install seed ps
+.PHONY: help up down logs test lint install seed ps dotnet-up dotnet-down dotnet-test
 
 help: ## Показать список команд
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -50,3 +50,13 @@ endif
 
 seed: ## Перезалить учебные данные в уже поднятую базу
 	$(COMPOSE) exec -T db mysql -ulab -plab carmoney_lab < db/seed.sql
+
+dotnet-up: ## Поднять параллельную .NET-реализацию и её MySQL (http://localhost:8081)
+	$(COMPOSE) -f docker-compose.dotnet.yml up -d --build
+	@echo "Сервис .NET: http://localhost:$${DOTNET_APP_PORT:-8081}/  ·  health: http://localhost:$${DOTNET_APP_PORT:-8081}/health"
+
+dotnet-down: ## Остановить .NET-реализацию
+	$(COMPOSE) -f docker-compose.dotnet.yml down
+
+dotnet-test: ## Прогнать xUnit-тесты .NET-реализации
+	dotnet test dotnet/CarMoneyLab.sln --configuration Release

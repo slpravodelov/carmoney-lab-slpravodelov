@@ -30,6 +30,24 @@ Docker'а на ноутбуке нет? Тогда локально работа
 | `make down` | остановить сервис |
 | `make seed` | перезалить учебные данные |
 | `make help` | список всех команд |
+| `make dotnet-up` | поднять параллельную ASP.NET Core-реализацию на `:8081` |
+| `make dotnet-test` | прогнать xUnit-тесты .NET-реализации |
+| `make dotnet-down` | остановить .NET-реализацию |
+
+## Параллельная .NET-реализация
+
+Исходный PHP/Slim-сервис остаётся в `backend/` и продолжает запускаться командой
+`make up`. Эквивалентная реализация на ASP.NET Core 8 находится в `dotnet/`; она
+использует тот же контракт API, правила валидации и MySQL-схему, но запускается
+отдельно, чтобы не менять текущий сервис:
+
+```bash
+make dotnet-up
+make dotnet-test
+curl http://localhost:8081/health
+```
+
+Для запуска без Docker требуется .NET SDK 8: `dotnet run --project dotnet/CarMoneyLab.Api`.
 
 ## API
 
