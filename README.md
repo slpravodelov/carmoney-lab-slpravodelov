@@ -41,6 +41,11 @@ Docker'а на ноутбуке нет? Тогда локально работа
 использует тот же контракт API, правила валидации и MySQL-схему, но запускается
 отдельно, чтобы не менять текущий сервис:
 
+Архитектура .NET-варианта следует Clean Architecture: `CarMoneyLab.Domain` содержит
+модель и правила оценки, `CarMoneyLab.Application` — сценарии и порты репозиториев,
+`CarMoneyLab.Infrastructure` — MySQL-адаптер, а `CarMoneyLab.Api` — HTTP-адаптер и
+composition root. Зависимости направлены только к внутренним слоям.
+
 ```bash
 make dotnet-up
 make dotnet-test
